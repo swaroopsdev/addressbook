@@ -3,9 +3,9 @@ pipeline {
     tools{
        jdk 'My_JAVA_Maven'
        maven 'My_Maven'
+    }   
     environment{
         Build_Server_IP="ec2-user@65.2.148.234"
-    }
     }
         stages {
          stage('Compile') {
