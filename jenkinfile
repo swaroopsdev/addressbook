@@ -1,37 +1,36 @@
 pipeline {
     agent any
-    stages {
-        stage('Compile the Code') {
-            steps {
-                echo "Compiling"
-                // Run Maven on a Unix agent.
-                //sh "mvn -Dmaven.test.failure.ignore=true clean package"
-                // To run Maven on a Windows agent, use
-                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
-            }
-            
-        }
-        stage('Unit Test') {
-            steps {
-                echo "Running the Test Cases"
-                // Run Maven on a Unix agent.
-                //sh "mvn -Dmaven.test.failure.ignore=true clean package"
+        parameters{
+        string(name:'ENV' ,defaultValue:'TEST',description:'env to deploy')
+        booleanParam(name:'executeTests',defaultValue:true,description:'decide to run the tc')
+        choice(name:'APPVERSION' ,choices:['1.1','1.2','1.3'])
+    }
+        stages {
+         stage('Compile') {
+         steps {
+            echo "Compiling the code"
 
-                // To run Maven on a Windows agent, use
-                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
-            }
-            
         }
-        stage('Package') {
-            steps {           
-                echo"Packageing the Code"   
-                // Run Maven on a Unix agent.
-                //sh "mvn -Dmaven.test.failure.ignore=true clean package"
+        }
+        stage('UnitTest') {
 
-                // To run Maven on a Windows agent, use
-                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+            when{
+                expression{
+                        params.executeTests ==true
+                }
             }
-            
+            steps {
+                script{
+                    echo "Running the Test Cases"
+            }
+            }
+        }    
+        stage('Package') {    
+             steps{
+                echo "Packaging the Code"
+                echo "Deployiing to env: ${params.ENV}"
+                echo "Deployiing Version: ${params.APPVERSION}"
+            }
         }
     }
 }
